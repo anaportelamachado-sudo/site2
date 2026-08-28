@@ -1,46 +1,101 @@
-// --- LÓGICA DO EXERCÍCIO DE RESPIRAÇÃO ---
-const breathText = document.getElementById('breath-text');
+//<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz: Conscientização sobre o Bullying</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f9; color: #333; display: flex; flex-direction: column; min-height: 100vh; }
+        header { background-color: #0056b3; color: white; text-align: center; padding: 2rem; }
+        main { max-width: 600px; margin: 20px auto; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); flex: 1; }
+        .quiz-container { margin-bottom: 20px; }
+        .question { font-size: 1.1rem; font-weight: bold; margin-top: 15px; margin-bottom: 10px; }
+        .options label { display: block; background: #e9ecef; padding: 10px; margin-bottom: 8px; border-radius: 4px; cursor: pointer; transition: 0.2s; }
+        .options label:hover { background: #dee2e6; }
+        .options input { margin-right: 10px; }
+        button { display: block; width: 100%; padding: 12px; background: #28a745; color: white; border: none; border-radius: 4px; font-size: 1rem; cursor: pointer; margin-top: 20px; }
+        button:hover { background: #218838; }
+        #result { margin-top: 20px; padding: 15px; background: #d4edda; color: #155724; border-radius: 4px; text-align: center; font-weight: bold; display: none; }
+        footer { text-align: center; padding: 1rem; background: #333; color: white; }
+    </style>
+</head>
+<body>
 
-// Função cíclica para alterar o texto do exercício de respiração sincronizado com o CSS
-function updateBreathingText() {
-    breathText.innerText = "Inspirar... preencha o peito";
-    
-    setTimeout(() => {
-        breathText.innerText = "Expirar... solte devagar";
-    }, 4000); // Muda após 4 segundos (metade da animação CSS de 8s)
-}
+    <header>
+        <h1>Quiz Interativo: Bullying</h1>
+        <p>Será que você sabe como identificar e agir contra o bullying?</p>
+    </header>
 
-// Inicializa e repete a cada 8 segundos
-updateBreathingText();
-setInterval(updateBreathingText, 8000);
+    <main>
+        <form id="quizForm">
+            <!-- Pergunta 1 -->
+            <div class="quiz-container">
+                <div class="question">1. O que caracteriza a prática do bullying?</div>
+                <div class="options">
+                    <label><input type="radio" name="q1" value="errado"> Uma discussão isolada entre dois amigos.</label>
+                    <label><input type="radio" name="q1" value="correto"> Atos violentos, intencionais e repetidos contra alguém sem motivo aparente.</label>
+                    <label><input type="radio" name="q1" value="errado"> Uma brincadeira de mau gosto que acontece apenas uma única vez.</label>
+                </div>
+            </div>
 
+            <!-- Pergunta 2 -->
+            <div class="quiz-container">
+                <div class="question">2. O que você deve fazer se presenciar alguém sofrendo bullying?</div>
+                <div class="options">
+                    <label><input type="radio" name="q2" value="errado"> Ignorar para não se envolver em problemas.</label>
+                    <label><input type="radio" name="q2" value="errado"> Gravar um vídeo e postar nas redes sociais.</label>
+                    <label><input type="radio" name="q2" value="correto"> Apoiar a vítima e avisar um adulto responsável ou professor imediatamente.</label>
+                </div>
+            </div>
 
-// --- LÓGICA DO DIÁRIO DE EMOÇÕES ---
-const diaryForm = document.getElementById('diary-form');
-const diaryInput = document.getElementById('diary-input');
-const diaryLogs = document.getElementById('diary-logs');
+            <!-- Pergunta 3 -->
+            <div class="quiz-container">
+                <div class="question">3. Qual das alternativas abaixo é um exemplo de Cyberbullying?</div>
+                <div class="options">
+                    <label><input type="radio" name="q3" value="correto"> Criar um perfil falso para espalhar boatos e humilhar um colega na internet.</label>
+                    <label><input type="radio" name="q3" value="errado"> Mandar uma mensagem dando parabéns pelo aniversário de um amigo.</label>
+                    <label><input type="radio" name="q3" value="errado"> Deixar de seguir uma pessoa em uma rede social.</label>
+                </div>
+            </div>
 
-diaryForm.addEventListener('submit', function(event) {
-    event.preventDefault(); // Evita que a página seja recarregada ao enviar
+            <button type="button" onclick="calculateScore()">Enviar Respostas</button>
+        </form>
 
-    const text = diaryInput.value.trim();
-    if(text === "") return;
+        <div id="result"></div>
+    </main>
 
-    // Pega a hora atual do registro
-    const now = new Date();
-    const timeString = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    <footer>
+        <p>&copy; 2026 - Projeto de Conscientização Contra o Bullying.</p>
+    </footer>
 
-    // Cria a estrutura visual do novo desabafo
-    const logItem = document.createElement('div');
-    logItem.classList.add('log-item');
-    logItem.innerHTML = `
-        <small>Registrado hoje às ${timeString}</small>
-        <p>${text}</p>
-    `;
+    <script>
+        function calculateScore() {
+            const form = document.getElementById('quizForm');
+            const totalQuestions = 3;
+            let score = 0;
 
-    // Adiciona o novo registro no topo da lista
-    diaryLogs.insertBefore(logItem, diaryLogs.firstChild);
+            // Verifica as respostas corretas
+            for (let i = 1; i <= totalQuestions; i++) {
+                const answer = form.querySelector(`input[name="q${i}"]:checked`);
+                if (answer && answer.value === "correto") {
+                    score++;
+                }
+            }
 
-    // Limpa a caixa de texto
-    diaryInput.value = "";
-});
+            // Exibe o resultado na tela
+            const resultDiv = document.getElementById('result');
+            resultDiv.style.display = "block";
+            resultDiv.innerHTML = `Você acertou ${score} de ${totalQuestions} perguntas!`;
+            
+            if (score === totalQuestions) {
+                resultDiv.style.backgroundColor = "#d4edda";
+                resultDiv.style.color = "#155724";
+            } else {
+                resultDiv.style.backgroundColor = "#fff3cd";
+                resultDiv.style.color = "#856404";
+            }
+        }
+    </script>
+</body>
+</html>
+
