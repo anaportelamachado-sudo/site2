@@ -1,315 +1,46 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DevMind // Saúde Emocional para Devs</title>
-    <style>
-        :root {
-            --bg-main: #0a0b10;
-            --bg-card: rgba(22, 24, 35, 0.7);
-            --bg-card-hover: rgba(28, 31, 46, 0.9);
-            --border-glow: rgba(139, 92, 246, 0.2);
-            --border-glow-hover: rgba(139, 92, 246, 0.4);
-            --text-main: #f3f4f6;
-            --text-muted: #9ca3af;
-            --primary: #8b5cf6;
-            --primary-gradient: linear-gradient(135deg, #a78bfa, #8b5cf6);
-            --secondary-gradient: linear-gradient(135deg, #3b82f6, #1d4ed8);
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-        }
+// --- LÓGICA DO EXERCÍCIO DE RESPIRAÇÃO ---
+const breathText = document.getElementById('breath-text');
 
-        body {
-            background-color: var(--bg-main);
-            color: var(--text-main);
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            margin: 0;
-            padding: 0;
-            line-height: 1.6;
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(139, 92, 246, 0.08) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.08) 0%, transparent 40%);
-            background-attachment: fixed;
-        }
+// Função cíclica para alterar o texto do exercício de respiração sincronizado com o CSS
+function updateBreathingText() {
+    breathText.innerText = "Inspirar... preencha o peito";
+    
+    setTimeout(() => {
+        breathText.innerText = "Expirar... solte devagar";
+    }, 4000); // Muda após 4 segundos (metade da animação CSS de 8s)
+}
 
-        /* Navbar moderna e minimalista */
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 40px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(12px);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            background: rgba(10, 11, 16, 0.7);
-        }
+// Inicializa e repete a cada 8 segundos
+updateBreathingText();
+setInterval(updateBreathingText, 8000);
 
-        .logo {
-            font-size: 20px;
-            font-weight: 800;
-            background: linear-gradient(135deg, #fff, var(--text-muted));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
 
-        .logo span {
-            color: #8b5cf6;
-            -webkit-text-fill-color: initial;
-        }
+// --- LÓGICA DO DIÁRIO DE EMOÇÕES ---
+const diaryForm = document.getElementById('diary-form');
+const diaryInput = document.getElementById('diary-input');
+const diaryLogs = document.getElementById('diary-logs');
 
-        .nav-links {
-            display: flex;
-            gap: 24px;
-        }
+diaryForm.addEventListener('submit', function(event) {
+    event.preventDefault(); // Evita que a página seja recarregada ao enviar
 
-        .nav-links a {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
+    const text = diaryInput.value.trim();
+    if(text === "") return;
 
-        .nav-links a:hover {
-            color: var(--text-main);
-        }
+    // Pega a hora atual do registro
+    const now = new Date();
+    const timeString = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 
-        /* Hero Section impactante */
-        .hero {
-            text-align: center;
-            padding: 80px 20px 40px 20px;
-            max-width: 800px;
-            margin: 0 auto;
-        }
+    // Cria a estrutura visual do novo desabafo
+    const logItem = document.createElement('div');
+    logItem.classList.add('log-item');
+    logItem.innerHTML = `
+        <small>Registrado hoje às ${timeString}</small>
+        <p>${text}</p>
+    `;
 
-        .hero h2 {
-            font-size: 48px;
-            font-weight: 800;
-            letter-spacing: -1px;
-            line-height: 1.2;
-            margin-bottom: 16px;
-            background: linear-gradient(135deg, #ffffff 40%, #a78bfa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+    // Adiciona o novo registro no topo da lista
+    diaryLogs.insertBefore(logItem, diaryLogs.firstChild);
 
-        .hero p {
-            color: var(--text-muted);
-            font-size: 18px;
-            margin-bottom: 32px;
-        }
-
-        /* Grid de Conteúdo Principal */
-        .container {
-            max-width: 1140px;
-            margin: 0 auto 80px auto;
-            padding: 0 20px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-            gap: 24px;
-        }
-
-        /* Cartões de vidro premium (Glassmorphism) */
-        .card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-glow);
-            border-radius: 16px;
-            padding: 28px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            backdrop-filter: blur(8px);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .card:hover {
-            background: var(--bg-card-hover);
-            border-color: var(--border-glow-hover);
-            transform: translateY(-4px);
-            box-shadow: 0 12px 30px rgba(139, 92, 246, 0.1);
-        }
-
-        .card-title {
-            font-size: 18px;
-            font-weight: 700;
-            margin: 0 0 12px 0;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .card-title svg {
-            color: #a78bfa;
-        }
-
-        .card-description {
-            color: var(--text-muted);
-            font-size: 14px;
-            margin-bottom: 20px;
-        }
-
-        /* Simulador de Código Estilizado */
-        .code-snippet {
-            background: #06070a;
-            border-radius: 8px;
-            padding: 14px;
-            font-family: 'Fira Code', ui-monospace, monospace;
-            font-size: 13px;
-            color: #cbd5e1;
-            overflow-x: auto;
-            border: 1px solid rgba(255,255,255,0.03);
-            margin-bottom: 20px;
-        }
-
-        .code-snippet .keyword { color: #f43f5e; }
-        .code-snippet .function { color: #60a5fa; }
-        .code-snippet .string { color: #34d399; }
-        .code-snippet .comment { color: #4b5563; }
-
-        /* Componentes Interativos e Inputs */
-        .interactive-area {
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 12px;
-            padding: 16px;
-            border: 1px solid rgba(255,255,255,0.02);
-        }
-
-        .input-group {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 12px;
-        }
-
-        .input-group div {
-            flex: 1;
-        }
-
-        label {
-            display: block;
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-muted);
-            margin-bottom: 6px;
-        }
-
-        input[type="number"] {
-            width: 100%;
-            background: #06070a;
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 8px;
-            padding: 10px;
-            color: #fff;
-            font-size: 14px;
-            box-sizing: border-box;
-            transition: border-color 0.3s;
-        }
-
-        input[type="number"]:focus {
-            outline: none;
-            border-color: #8b5cf6;
-        }
-
-        button {
-            width: 100%;
-            background: var(--primary-gradient);
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            padding: 12px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: opacity 0.2s;
-        }
-
-        button:hover {
-            opacity: 0.9;
-        }
-
-        /* Animação de Respiração Fluida */
-        .breathing-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .lung-element {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: rgba(139, 92, 246, 0.2);
-            border: 2px solid #8b5cf6;
-            box-shadow: 0 0 15px rgba(139, 92, 246, 0.4);
-            transition: transform 4s cubic-bezier(0.4, 0, 0.2, 1), background-color 4s;
-        }
-
-        .expanding { transform: scale(1.7); background: rgba(16, 185, 129, 0.3); border-color: var(--success); box-shadow: 0 0 20px rgba(16, 185, 129, 0.5); }
-        .shrinking { transform: scale(1.0); background: rgba(239, 68, 68, 0.2); border-color: var(--danger); box-shadow: 0 0 15px rgba(239, 68, 68, 0.4); }
-
-        #breathing-text {
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--text-muted);
-        }
-
-        #result-display {
-            font-size: 13px;
-            border-radius: 8px;
-            padding: 12px;
-            margin-top: 12px;
-            display: none;
-            font-weight: 500;
-        }
-
-        /* Rodapé Minimalista */
-        footer {
-            text-align: center;
-            padding: 40px 20px;
-            color: var(--text-muted);
-            font-size: 13px;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-        }
-    </style>
-</head>
-<body>
-
-    <nav>
-        <div class="logo"><span>//</span> devMind</div>
-        <div class="nav-links">
-            <a href="#features">Módulos</a>
-            <a href="https://github.com" target="_blank">Open Source</a>
-        </div>
-    </nav>
-
-    <section class="hero">
-        <h2>Refatore sua mente.<br>Compile sua melhor versão.</h2>
-        <p>A engenharia de software exige alto processamento cognitivo. Fornecemos micro-estruturas e lógicas funcionais criadas sob medida para manter a sua saúde mental estável.</p>
-    </section>
-
-    <main class="container" id="features">
-        
-        <!-- CARD 1: Respiração Quadrada -->
-        <div class="card">
-            <div>
-                <div class="card-title">
-                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.253 8H18"></path></svg>
-                    Thread de Calmaria
-                </div>
-                <div class="card-description">Instancie um ciclo de biofeedback mecânico para reduzir a atividade simpática e mitigar picos de ansiedade repentinos.</div>
-                
-                <div class="code-snippet">
-                    <span class="keyword">while</span> (stress &gt; tolerance) {<br>
-                    &nbsp;&nbsp;<span class="function">inhale</span>(<span class="number">4000</span>); <span class="comment">// ms</span><br>
-                    &nbsp;&nbsp;<span class="function">hold</span>(<span class="number">4000</span>);<br>
-                    &nbsp;&nbsp;<span class="function">exhale</span>(<span class="number">4000</span>);<br>
-                    }
-                </div>
-
+    // Limpa a caixa de texto
+    diaryInput.value = "";
+});
